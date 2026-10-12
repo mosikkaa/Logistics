@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { Avatar } from "@/components/avatar";
-import { LogistForm, ToggleActiveButton } from "./logist-form";
+import { Avatar } from "@/components/atoms/avatar";
+import { LogistForm, ToggleActiveButton } from "@/components/organisms/logist-form";
 
 export const metadata: Metadata = { title: "Logists" };
 

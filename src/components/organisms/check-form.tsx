@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useFormStatus } from "react-dom";
-import { PhoneField } from "@/components/phone-field";
+import { PhoneField } from "@/components/molecules/phone-field";
 import { checkNumberAction } from "@/app/actions/check";
 
 export function CheckForm({ defaultPhone, invalid }: { defaultPhone?: string; invalid: boolean }) {

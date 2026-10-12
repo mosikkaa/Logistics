@@ -4,9 +4,10 @@ import { AlertTriangle, Check, Clock, Truck } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { findDriverByPhone, getRecentChecks } from "@/lib/drivers";
 import { formatPhone, normalizePhone, whatsappUrl } from "@/lib/phone";
-import { Avatar, DestinationTag, LogistBadge } from "@/components/avatar";
-import { WhatsAppIcon } from "@/components/whatsapp-icon";
-import { CheckForm } from "./check-form";
+import { Avatar, DestinationTag } from "@/components/atoms/avatar";
+import { LogistBadge } from "@/components/molecules/logist-badge";
+import { WhatsAppIcon } from "@/components/atoms/whatsapp-icon";
+import { CheckForm } from "@/components/organisms/check-form";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 

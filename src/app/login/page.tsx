@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Truck } from "lucide-react";
-import { LoginForm } from "./login-form";
+import { LoginForm } from "@/components/organisms/login-form";
+import { Logo } from "@/components/atoms/logo";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -42,21 +42,5 @@ export default function LoginPage() {
         </div>
       </section>
     </main>
-  );
-}
-
-function Logo({ dark = true }: { dark?: boolean }) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="inline-flex size-9 items-center justify-center rounded-[10px] bg-brand-600 text-white">
-        <Truck className="size-5" />
-      </span>
-      <span>
-        <span className={`block text-base leading-6 font-semibold ${dark ? "text-white" : "text-ink"}`}>
-          Logistics CMS
-        </span>
-        <span className={`block text-xs ${dark ? "text-sidebar-muted" : "text-ink-2"}`}>Driver database</span>
-      </span>
-    </div>
   );
 }

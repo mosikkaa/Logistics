@@ -11,10 +11,14 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
-import { Modal } from "@/components/modal";
-import { PhoneField, type PhoneValue } from "@/components/phone-field";
-import { DestinationTag, LogistBadge } from "@/components/avatar";
-import { WhatsAppIcon } from "@/components/whatsapp-icon";
+import { Modal } from "@/components/molecules/modal";
+import { PhoneField, type PhoneValue } from "@/components/molecules/phone-field";
+import { Stepper } from "@/components/molecules/stepper";
+import { DestinationTag } from "@/components/atoms/avatar";
+import { LogistBadge } from "@/components/molecules/logist-badge";
+import { WhatsAppIcon } from "@/components/atoms/whatsapp-icon";
+import { FormError } from "@/components/atoms/form-error";
+import { FieldError } from "@/components/atoms/field-error";
 import {
   checkPhoneAction,
   createDriverAction,
@@ -108,35 +112,6 @@ export function EditDriverButton({ driver, children }: { driver: DriverDTO; chil
 /* ------------------------------------------------------------------ */
 /* Add driver: step 1 (number check) → step 2 (details)                */
 /* ------------------------------------------------------------------ */
-
-function Stepper({ step }: { step: 1 | 2 }) {
-  return (
-    <div className="flex items-center gap-3">
-      <StepDot n={1} label="Phone number" state={step === 1 ? "active" : "done"} />
-      <span className={`h-0.5 flex-1 rounded ${step === 2 ? "bg-emerald-500" : "bg-line"}`} />
-      <StepDot n={2} label="Driver details" state={step === 2 ? "active" : "todo"} />
-    </div>
-  );
-}
-
-function StepDot({ n, label, state }: { n: number; label: string; state: "active" | "done" | "todo" }) {
-  return (
-    <span className="flex items-center gap-2">
-      <span
-        className={`inline-flex size-6 items-center justify-center rounded-full text-xs font-semibold ${
-          state === "done"
-            ? "bg-emerald-500 text-white"
-            : state === "active"
-              ? "bg-brand-600 text-white"
-              : "border border-line-strong bg-canvas text-ink-2"
-        }`}
-      >
-        {state === "done" ? <Check className="size-3.5" /> : n}
-      </span>
-      <span className={`text-[13px] font-medium ${state === "todo" ? "text-ink-2" : "text-ink"}`}>{label}</span>
-    </span>
-  );
-}
 
 function CreateDriverDialog({
   onClose,
@@ -515,14 +490,6 @@ function EditDriverDialog({
   );
 }
 
-function FormError({ message }: { message: string }) {
-  return (
-    <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm text-red-700">
-      {message}
-    </p>
-  );
-}
-
 function DriverFields({
   errors,
   currentUserId,
@@ -670,9 +637,4 @@ function DriverFields({
       </div>
     </>
   );
-}
-
-function FieldError({ message }: { message?: string }) {
-  if (!message) return null;
-  return <p className="mt-1.5 text-xs font-medium text-red-600">{message}</p>;
 }

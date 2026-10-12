@@ -1,4 +1,4 @@
-import { AVATAR_COLORS, initials, shortName } from "@/lib/constants";
+import { AVATAR_COLORS, initials } from "@/lib/constants";
 
 export function Avatar({ name, color, size = 28 }: { name: string; color: string; size?: number }) {
   return (
@@ -10,15 +10,6 @@ export function Avatar({ name, color, size = 28 }: { name: string; color: string
       aria-hidden="true"
     >
       {initials(name)}
-    </span>
-  );
-}
-
-export function LogistBadge({ name, color, full = false }: { name: string; color: string; full?: boolean }) {
-  return (
-    <span className="inline-flex items-center gap-2" title={name}>
-      <Avatar name={name} color={color} />
-      <span className="truncate text-[13px] font-medium text-ink">{full ? name : shortName(name)}</span>
     </span>
   );
 }

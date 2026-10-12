@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useFormStatus } from "react-dom";
-import { PhoneField } from "@/components/phone-field";
+import { PhoneField } from "@/components/molecules/phone-field";
 import { checkNumberAction } from "@/app/actions/check";
 
 /** Header shortcut: check a number without leaving the dashboard. */

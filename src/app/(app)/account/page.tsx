@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/auth";
-import { Avatar } from "@/components/avatar";
-import { PasswordForm } from "./password-form";
+import { Avatar } from "@/components/atoms/avatar";
+import { PasswordForm } from "@/components/organisms/password-form";
 
 export const metadata: Metadata = { title: "Account" };
 

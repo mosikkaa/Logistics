@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { LogOut, Truck } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
-import { Avatar } from "@/components/avatar";
-import { SidebarNav } from "./sidebar-nav";
+import { Avatar } from "@/components/atoms/avatar";
+import { SidebarNav } from "@/components/organisms/sidebar-nav";
 
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
