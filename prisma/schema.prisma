@@ -1,0 +1,65 @@
+// Logistics CMS — database schema (Microsoft SQL Server)
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+/// A logist (company employee) who can sign in to the CMS.
+model User {
+  id           Int           @id @default(autoincrement())
+  name         String        @db.NVarChar(100)
+  email        String        @unique @db.NVarChar(200)
+  passwordHash String        @db.NVarChar(200)
+  /// "ADMIN" or "LOGIST" (SQL Server has no enum type)
+  role         String        @default("LOGIST") @db.NVarChar(20)
+  /// Avatar color key used in the UI: blue | rose | amber | violet | green | slate
+  color        String        @default("blue") @db.NVarChar(20)
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  drivers      Driver[]
+  checks       NumberCheck[]
+}
+
+/// Destination category shown as a tab on the dashboard (Turkey, Russia, ...).
+model Destination {
+  id        Int      @id @default(autoincrement())
+  code      String   @unique @db.NVarChar(10)
+  name      String   @db.NVarChar(100)
+  sortOrder Int      @default(0)
+  drivers   Driver[]
+}
+
+model Driver {
+  id           Int           @id @default(autoincrement())
+  /// Always stored normalized as E.164, e.g. "+995599123456". Unique = no duplicates.
+  phone        String        @unique @db.NVarChar(20)
+  name         String        @db.NVarChar(150)
+  truckType    String        @db.NVarChar(100)
+  description  String?       @db.NVarChar(2000)
+  logistId     Int
+  logist       User          @relation(fields: [logistId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  destinations Destination[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@index([logistId])
+  @@index([createdAt])
+}
+
+/// History of "Check number" lookups, shown as "Your recent checks".
+model NumberCheck {
+  id        Int      @id @default(autoincrement())
+  phone     String   @db.NVarChar(20)
+  found     Boolean
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}

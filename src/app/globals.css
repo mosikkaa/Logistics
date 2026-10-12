@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* Design tokens from the Figma file "Logistics CMS – Drivers" */
+@theme {
+  --font-sans: "Inter", "Segoe UI", ui-sans-serif, system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --color-canvas: #f4f6fa;
+  --color-subtle: #f9fafb;
+  --color-line: #e4e7ec;
+  --color-line-strong: #d0d5dd;
+
+  --color-ink: #101828;
+  --color-ink-2: #667085;
+  --color-ink-3: #98a2b3;
+
+  --color-sidebar: #0b1b33;
+  --color-sidebar-active: #1b2f52;
+  --color-sidebar-muted: #9aa8c1;
+
+  --color-brand-50: #eff4ff;
+  --color-brand-500: #2563eb;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+
+  --color-wa: #25d366;
+  --color-wa-dark: #1ebe5b;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    @apply bg-canvas text-ink antialiased;
+  }
+  ::selection {
+    @apply bg-brand-50 text-brand-700;
+  }
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20;
+}
+
+@utility btn-primary {
+  @apply btn bg-brand-600 text-white hover:bg-brand-700;
+}
+
+@utility btn-secondary {
+  @apply btn border border-line-strong bg-white text-ink hover:bg-subtle;
+}
+
+@utility btn-ghost {
+  @apply btn text-brand-700 hover:bg-brand-50;
+}
+
+@utility btn-danger {
+  @apply btn border border-red-200 bg-white text-red-600 hover:bg-red-50;
+}
+
+@utility field-label {
+  @apply mb-1.5 block text-[13px] font-medium text-ink;
+}
+
+@utility field {
+  @apply w-full rounded-lg border border-line-strong bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink-3 transition-shadow outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15 disabled:bg-subtle disabled:text-ink-2;
+}
+
+@utility card {
+  @apply rounded-2xl border border-line bg-white;
+}
