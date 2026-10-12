@@ -62,7 +62,13 @@ export type ParsedPhone = {
 };
 
 const MIN_LOCAL = 6;
-const MAX_LOCAL = 12;
+/** Country code + local number together, e.g. "+995599123456" has 12 digits after the "+". */
+const MAX_TOTAL_DIGITS = 16;
+
+/** How many local digits fit after this dial code without exceeding MAX_TOTAL_DIGITS. */
+export function maxLocalDigits(dial: string): number {
+  return MAX_TOTAL_DIGITS - dial.length;
+}
 
 /**
  * Split whatever the user typed or pasted into country code + local number.
@@ -110,12 +116,26 @@ function stripTrunkZero(local: string, dial: string): string {
   return local.startsWith("0") ? local.replace(/^0+/, "") : local;
 }
 
-export function isValidLocal(local: string): boolean {
-  return /^\d+$/.test(local) && local.length >= MIN_LOCAL && local.length <= MAX_LOCAL;
+export function isValidLocal(local: string, dial: string = DEFAULT_DIAL): boolean {
+  return /^\d+$/.test(local) && local.length >= MIN_LOCAL && local.length <= maxLocalDigits(dial);
 }
 
 export function toE164(dial: string, local: string): string {
   return `+${dial}${local}`;
+}
+
+/** Drops digits past maxDigits, keeping any separators (spaces, dashes) typed before the cutoff. */
+export function truncateDigits(s: string, maxDigits: number): string {
+  let count = 0;
+  let out = "";
+  for (const ch of s) {
+    if (/\d/.test(ch)) {
+      count++;
+      if (count > maxDigits) break;
+    }
+    out += ch;
+  }
+  return out;
 }
 
 /**
@@ -124,7 +144,7 @@ export function toE164(dial: string, local: string): string {
  */
 export function normalizePhone(raw: string, currentDial: string = DEFAULT_DIAL): string | null {
   const { dial, local } = parsePhone(raw, currentDial);
-  if (!isValidLocal(local)) return null;
+  if (!isValidLocal(local, dial)) return null;
   return toE164(dial, local);
 }
 

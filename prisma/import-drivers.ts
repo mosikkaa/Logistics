@@ -95,7 +95,7 @@ function mapTruck(raw: string): { truckType: string; note?: string } {
   if (!t) return { truckType: "Other" };
   const tent = /ტენტ/.test(t);
   const ref = /რეფ/.test(t);
-  const type = tent && ref ? "Tent / Refrigerator" : tent ? "Tent" : ref ? "Refrigerator" : "Other";
+  const type = tent && ref ? "Tent / Ref" : tent ? "Tent" : ref ? "Ref" : "Other";
   // keep anything more than the plain word ("2ტენტი", "ტენტი105", "რაღაცა") as a note
   const plain = ["ტენტი", "რეფი", "ტენტი/რეფი", "რეფი/ტენტი"];
   return { truckType: type, note: plain.includes(t) ? undefined : `მანქანა: ${raw.trim()}` };

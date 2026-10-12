@@ -69,8 +69,8 @@ export function DriversToolbar({
       </div>
       <Select
         label="Logist"
-        value={initial.logist}
-        onChange={(v) => update({ logist: v })}
+        value={initial.logist === "all" ? "" : initial.logist}
+        onChange={(v) => update({ logist: v || "all" })}
         options={logists.map((l) => ({ value: String(l.id), label: l.name }))}
       />
       <Select

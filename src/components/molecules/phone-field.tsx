@@ -8,9 +8,11 @@ import {
   countryByDial,
   formatLocal,
   isValidLocal,
+  maxLocalDigits,
   parsePhone,
   splitE164,
   toE164,
+  truncateDigits,
 } from "@/lib/phone";
 
 export type PhoneValue = { e164: string | null; dial: string; local: string };
@@ -56,12 +58,13 @@ export function PhoneField({
 
   function emit(nextDial: string, nextLocal: string) {
     const d = nextLocal.replace(/\D/g, "");
-    onValueChange?.({ dial: nextDial, local: d, e164: isValidLocal(d) ? toE164(nextDial, d) : null });
+    onValueChange?.({ dial: nextDial, local: d, e164: isValidLocal(d, nextDial) ? toE164(nextDial, d) : null });
   }
 
   function applyParsed(text: string) {
     const p = parsePhone(text, dial);
-    const formatted = formatLocal(p.local, p.dial);
+    const local = p.local.slice(0, maxLocalDigits(p.dial));
+    const formatted = formatLocal(local, p.dial);
     setDial(p.dial);
     setLocal(formatted);
     if (p.detected) {
@@ -87,7 +90,7 @@ export function PhoneField({
       applyParsed(value);
       return;
     }
-    const cleaned = value.replace(/[^\d\s\-()]/g, "");
+    const cleaned = truncateDigits(value.replace(/[^\d\s\-()]/g, ""), maxLocalDigits(dial));
     setLocal(cleaned);
     setDetected(null);
     emit(dial, cleaned);
@@ -124,9 +127,12 @@ export function PhoneField({
               value={dial}
               disabled={disabled}
               onChange={(e) => {
-                setDial(e.target.value);
+                const nextDial = e.target.value;
+                const trimmed = truncateDigits(local, maxLocalDigits(nextDial));
+                setDial(nextDial);
+                setLocal(trimmed);
                 setDetected(null);
-                emit(e.target.value, local);
+                emit(nextDial, trimmed);
               }}
               className="field appearance-none pr-8"
             >

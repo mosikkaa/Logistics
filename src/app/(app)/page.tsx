@@ -45,16 +45,19 @@ function hrefWith(sp: SP, changes: Record<string, string | undefined>) {
 async function Dashboard({ searchParams }: { searchParams: Promise<SP> }) {
   const user = await getCurrentUser();
   const sp = await searchParams;
+  const logistParam = one(sp.logist);
   const filters = {
     dest: one(sp.dest),
     q: one(sp.q),
     truck: one(sp.truck),
-    logist: Number(one(sp.logist)) || undefined,
+    // No ?logist= in the URL yet (first visit) -> default to "my drivers".
+    // ?logist=all is the explicit "show everyone" choice from the dropdown.
+    logist: logistParam === undefined ? user.id : logistParam === "all" ? undefined : Number(logistParam) || undefined,
     page: Number(one(sp.page)) || 1,
   };
 
   const [{ tabs, total }, list, allLogists, destinations] = await Promise.all([
-    getDestinationTabs(),
+    getDestinationTabs(filters.logist),
     listDrivers(filters),
     getLogists(),
     getDestinations(),
@@ -104,7 +107,7 @@ async function Dashboard({ searchParams }: { searchParams: Promise<SP> }) {
           <div className="flex flex-wrap items-center gap-3 px-5 py-4">
             <DriversToolbar
               logists={allLogists}
-              initial={{ q: filters.q ?? "", logist: filters.logist ? String(filters.logist) : "", truck: filters.truck ?? "" }}
+              initial={{ q: filters.q ?? "", logist: logistParam ?? String(user.id), truck: filters.truck ?? "" }}
             />
             <p className="ml-auto text-[13px] text-ink-2">
               {list.total ? `Showing ${from}–${to} of ${list.total}` : "No drivers"}

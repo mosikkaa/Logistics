@@ -25,13 +25,14 @@ export async function getDestinations() {
   return db.destination.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }] });
 }
 
-export async function getDestinationTabs() {
+export async function getDestinationTabs(logist?: number) {
+  const where: Prisma.DriverWhereInput | undefined = logist ? { logistId: logist } : undefined;
   const [destinations, total] = await Promise.all([
     db.destination.findMany({
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-      select: { id: true, code: true, name: true, _count: { select: { drivers: true } } },
+      select: { id: true, code: true, name: true, _count: { select: { drivers: { where } } } },
     }),
-    db.driver.count(),
+    db.driver.count({ where }),
   ]);
   return {
     total,

@@ -1,18 +1,5 @@
 /** Truck types offered in forms and filters. */
-export const TRUCK_TYPES = [
-  "Tent",
-  "Refrigerator",
-  "Tent / Refrigerator",
-  "Tilt",
-  "Mega trailer",
-  "Flatbed",
-  "Container 20ft",
-  "Container 40ft",
-  "Car carrier",
-  "Tanker",
-  "Van / small truck",
-  "Other",
-] as const;
+export const TRUCK_TYPES = ["Tent", "Ref", "Tent / Ref"] as const;
 
 /** Avatar colors for logists (keys stored in User.color). */
 export const AVATAR_COLORS: Record<string, string> = {
