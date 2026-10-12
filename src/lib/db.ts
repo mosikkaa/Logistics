@@ -14,6 +14,18 @@ function createClient() {
 
 const globalForPrisma = globalThis as unknown as { prisma?: ReturnType<typeof createClient> };
 
-export const db = globalForPrisma.prisma ?? createClient();
+function getClient() {
+  globalForPrisma.prisma ??= createClient();
+  return globalForPrisma.prisma;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+/**
+ * Created on first use, so `next build` works even where DATABASE_URL isn't set.
+ */
+export const db = new Proxy({} as ReturnType<typeof createClient>, {
+  get(_target, prop) {
+    const client = getClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+});

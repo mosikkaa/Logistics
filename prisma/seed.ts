@@ -11,14 +11,17 @@ import { PrismaClient } from "../src/generated/prisma/client";
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL || process.env.DATABASE_URL! }) });
 
 const DESTINATIONS = [
+  { code: "GE", name: "Georgia" },
   { code: "TR", name: "Turkey" },
-  { code: "AZ", name: "Azerbaijan" },
-  { code: "AM", name: "Armenia" },
   { code: "RU", name: "Russia" },
+  { code: "AM", name: "Armenia" },
+  { code: "AZ", name: "Azerbaijan" },
   { code: "KZ", name: "Kazakhstan" },
-  { code: "UZ", name: "Uzbekistan" },
+  { code: "BY", name: "Belarus" },
+  { code: "CA", name: "Central Asia" },
   { code: "EU", name: "Europe" },
-  { code: "UA", name: "Ukraine" },
+  { code: "CN", name: "China" },
+  { code: "ALL", name: "All directions" },
 ];
 
 async function upsertUser(u: { name: string; email: string; password: string; role: string; color: string }) {
@@ -34,7 +37,7 @@ async function main() {
   for (const [i, d] of DESTINATIONS.entries()) {
     await db.destination.upsert({
       where: { code: d.code },
-      update: {},
+      update: { sortOrder: i },
       create: { ...d, sortOrder: i },
     });
   }
@@ -57,10 +60,10 @@ async function main() {
     const giorgi = await upsertUser({ name: "Giorgi Tsereteli", email: "giorgi@example.com", password: "changeme123", role: "LOGIST", color: "amber" });
     const dest = Object.fromEntries((await db.destination.findMany()).map((d) => [d.code, d.id]));
     const samples = [
-      { phone: "+995599123456", name: "Giorgi Beridze", truckType: "Tent 20t", logistId: admin.id, d: ["TR", "AZ"], description: "Available from 15 Oct. Prefers Poti port pickups" },
+      { phone: "+995599123456", name: "Giorgi Beridze", truckType: "Tent", logistId: admin.id, d: ["TR", "AZ"], description: "Available from 15 Oct. Prefers Poti port pickups" },
       { phone: "+995577452109", name: "Levan Kapanadze", truckType: "Refrigerator", logistId: nino.id, d: ["RU", "KZ"], description: "ADR certified, crosses via Upper Lars" },
       { phone: "+995555339012", name: "Davit Gelashvili", truckType: "Mega trailer", logistId: admin.id, d: ["EU"], description: "Schengen visa until 2027, CMR insured" },
-      { phone: "+994502147731", name: "Elvin Mammadov", truckType: "Tilt", logistId: giorgi.id, d: ["AZ", "UZ", "KZ"], description: "Regular Baku – Tashkent route" },
+      { phone: "+994502147731", name: "Elvin Mammadov", truckType: "Tilt", logistId: giorgi.id, d: ["AZ", "CA", "KZ"], description: "Regular Baku – Tashkent route" },
       { phone: "+37491552018", name: "Armen Petrosyan", truckType: "Container 40ft", logistId: giorgi.id, d: ["AM"], description: "Batumi port containers, own chassis" },
     ];
     for (const s of samples) {

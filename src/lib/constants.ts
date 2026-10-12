@@ -1,9 +1,10 @@
 /** Truck types offered in forms and filters. */
 export const TRUCK_TYPES = [
-  "Tent 20t",
+  "Tent",
+  "Refrigerator",
+  "Tent / Refrigerator",
   "Tilt",
   "Mega trailer",
-  "Refrigerator",
   "Flatbed",
   "Container 20ft",
   "Container 40ft",

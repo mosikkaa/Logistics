@@ -71,6 +71,20 @@ npm run dev        # http://localhost:3000
 
 Sign in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`, then add the other logists on the **Logists** page.
 
+## Importing drivers from Excel
+
+```bash
+npm run import:drivers -- "C:\path\mtavari_baza.xlsx" --sheet luka --dry-run   # preview only
+npm run import:drivers -- "C:\path\mtavari_baza.xlsx" --sheet luka             # import
+```
+
+- Columns: A number, B name, C truck, D and later destinations (first row is the header).
+- Drivers are assigned to the admin account (use `--logist email` for someone else).
+- Numbers are cleaned like in the app; numbers already in the database are skipped, so running it twice is safe.
+- Georgian destination words (რუსეთი, თურქეთი, ყველა მიმართულება…) are mapped to the tabs. Notes in brackets and anything unrecognized go into the description.
+- A report `import-report-<sheet>.csv` is saved next to the Excel file.
+- Keep the Excel file out of Git: it contains phone numbers.
+
 ## Production
 
 ```bash
