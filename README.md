@@ -19,13 +19,13 @@ Design: [Figma — Logistics CMS – Drivers](https://www.figma.com/design/U3kPj
 |---|---|
 | Framework | Next.js 16 (App Router, Server Actions, Cache Components), React 19, TypeScript |
 | Styling | Tailwind CSS v4 (design tokens in `src/app/globals.css`) |
-| Database | **Microsoft SQL Server** via Prisma ORM 7 + `@prisma/adapter-mssql` |
+| Database | **PostgreSQL on [Supabase](https://supabase.com)** via Prisma ORM 7 + `@prisma/adapter-pg` |
 | Auth | Email + password (bcrypt), signed HTTP-only session cookie (`jose`) |
 | Tests | Vitest (`src/lib/phone.test.ts`) |
 
 ## Getting started
 
-Requirements: Node.js 20.9+ and a SQL Server 2017+ instance (Express, Developer, Standard, or Azure SQL all work).
+Requirements: Node.js 20.9+ and a free [Supabase](https://supabase.com) project (or any PostgreSQL 14+).
 
 ### 1. Install
 
@@ -34,23 +34,17 @@ npm install
 cp .env.example .env
 ```
 
-### 2. Database
+### 2. Database (Supabase)
 
-**Option A: local SQL Server in Docker**
+1. Create a project at [supabase.com](https://supabase.com). Save the **database password** you choose.
+2. In the project, click **Connect** (top bar) → **ORMs** tab → **Prisma**.
+3. Copy the two connection strings into `.env`, replacing `[YOUR-PASSWORD]`:
+   - `DATABASE_URL`: the **Transaction pooler** URL (port **6543**, ends with `?pgbouncer=true`). The app uses this.
+   - `DIRECT_URL`: the **Session pooler** / direct URL (port **5432**). Migrations and the seed use this.
 
-```bash
-docker compose up -d
-```
+If your password contains special characters such as `@`, `#` or `/`, URL-encode them (`@` → `%40`, `#` → `%23`, `/` → `%2F`).
 
-The default `DATABASE_URL` in `.env.example` already points to this container.
-
-**Option B: your existing SQL Server.** Put its connection string in `.env`:
-
-```
-DATABASE_URL="sqlserver://HOST:1433;database=logistics;user=USER;password=PASSWORD;encrypt=true;trustServerCertificate=true"
-```
-
-For SQL Server Express or a named instance, enable **TCP/IP** in SQL Server Configuration Manager and turn on **SQL Server authentication** (mixed mode). If the login isn't allowed to create databases, run `CREATE DATABASE logistics;` yourself first.
+**Local alternative:** `docker compose up -d` starts a Postgres on your PC; use the commented `localhost` URLs in `.env.example`.
 
 ### 3. Fill in `.env`
 
@@ -61,13 +55,13 @@ For SQL Server Express or a named instance, enable **TCP/IP** in SQL Server Conf
 ### 4. Create the tables and seed
 
 ```bash
-npm run db:migrate -- --name init   # creates prisma/migrations and the tables
+npm run db:deploy                   # creates the tables (prisma/migrations)
 npm run db:seed                     # 8 destinations + your admin account
 # optional demo data:
 SEED_SAMPLE=1 npm run db:seed       # PowerShell: $env:SEED_SAMPLE=1; npm run db:seed
 ```
 
-Commit the generated `prisma/migrations` folder.
+Later, after you change `prisma/schema.prisma`, run `npm run db:migrate -- --name what-changed` to create a new migration, and commit it.
 
 ### 5. Run
 
@@ -86,7 +80,9 @@ npm run build
 npm start          # port 3000, change with: npm start -- -p 8080
 ```
 
-Run it behind HTTPS. The session cookie is `Secure` in production. On Windows you can keep it running with a service manager such as [PM2](https://pm2.keymetrics.io/) or NSSM, and use IIS or nginx as a reverse proxy.
+Run it behind HTTPS. The session cookie is `Secure` in production.
+
+**Vercel** (works well with Supabase): import the GitHub repo, add `DATABASE_URL`, `DIRECT_URL`, `SESSION_SECRET` in *Settings → Environment Variables*, and deploy. Run `npm run db:deploy` and `npm run db:seed` once from your computer with the same `.env`.
 
 ## Useful scripts
 
@@ -113,7 +109,7 @@ src/
     auth.ts              getCurrentUser() — the only place that reads the session
     session.ts           sign/verify the session cookie
     drivers.ts           database queries
-    db.ts                Prisma client with the SQL Server adapter
+    db.ts                Prisma client with the PostgreSQL adapter
   app/
     login/               sign-in page
     logout/route.ts      sign out (POST)
@@ -133,8 +129,8 @@ src/
 - **Truck types** are listed in `src/lib/constants.ts`.
 - **Country codes** for the phone field are in `src/lib/phone.ts` (`COUNTRIES`).
 
-## Notes on SQL Server
+## Notes on the database
 
-- SQL Server has no enum type, so `User.role` is a string: `"ADMIN"` or `"LOGIST"`.
-- Text columns are `NVARCHAR`, so Georgian and Russian names are stored correctly.
-- Search uses the database collation. The default (`SQL_Latin1_General_CP1_CI_AS`) is case-insensitive.
+- **Row Level Security is on.** The app talks to Postgres directly through Prisma and never uses Supabase's Data API. The first migration enables RLS on every table with no policies, which blocks that API, while Prisma (connected as the table owner) keeps working.
+- Search is case-insensitive (`ILIKE`).
+- `User.role` is a string: `"ADMIN"` or `"LOGIST"`.

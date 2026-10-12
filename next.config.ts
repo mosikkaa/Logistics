@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   // Database drivers run in Node.js and should not be bundled.
-  serverExternalPackages: ["@prisma/adapter-mssql", "mssql", "tedious"],
+  serverExternalPackages: ["@prisma/adapter-pg", "pg"],
   turbopack: {
     rules: {
       "*.css": {

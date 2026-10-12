@@ -1,17 +1,17 @@
-# Local SQL Server for development:  docker compose up -d
+# Optional local PostgreSQL for development (production uses Supabase):  docker compose up -d
 services:
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: logistics-mssql
+  postgres:
+    image: postgres:17
+    container_name: logistics-postgres
     environment:
-      ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "Logistics_Dev_2026!"
-      MSSQL_PID: "Developer"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: logistics
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - mssql-data:/var/opt/mssql
+      - pg-data:/var/lib/postgresql/data
     restart: unless-stopped
 
 volumes:
-  mssql-data:
+  pg-data:

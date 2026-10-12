@@ -4,6 +4,7 @@ import { defineConfig } from "prisma/config";
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: { path: "prisma/migrations", seed: "tsx prisma/seed.ts" },
-  // Not needed for `prisma generate` (runs on npm install), required for migrate/seed.
-  datasource: { url: process.env.DATABASE_URL ?? "" },
+  // Migrations use the Supabase "Session pooler"/direct URL (port 5432), not the
+  // transaction pooler. Not needed for `prisma generate` (runs on npm install).
+  datasource: { url: process.env.DIRECT_URL || process.env.DATABASE_URL || "" },
 });

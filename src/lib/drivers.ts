@@ -64,9 +64,9 @@ export async function listDrivers(f: DriverFilters) {
     const q = f.q.trim();
     const digits = q.replace(/\D/g, "");
     const or: Prisma.DriverWhereInput[] = [
-      { name: { contains: q } },
-      { description: { contains: q } },
-      { truckType: { contains: q } },
+      { name: { contains: q, mode: "insensitive" } },
+      { description: { contains: q, mode: "insensitive" } },
+      { truckType: { contains: q, mode: "insensitive" } },
     ];
     // "599 12 34" or "+995 599..." -> match on stored digits
     if (digits.length >= 3) or.push({ phone: { contains: digits.replace(/^00/, "") } });

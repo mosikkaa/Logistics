@@ -5,10 +5,10 @@
  */
 import "dotenv/config";
 import bcrypt from "bcryptjs";
-import { PrismaMssql } from "@prisma/adapter-mssql";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
-const db = new PrismaClient({ adapter: new PrismaMssql(process.env.DATABASE_URL!) });
+const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DIRECT_URL || process.env.DATABASE_URL! }) });
 
 const DESTINATIONS = [
   { code: "TR", name: "Turkey" },
